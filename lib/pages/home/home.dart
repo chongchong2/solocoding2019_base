@@ -19,7 +19,6 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   WeatherBloc _weatherBloc;
   Completer<void> _refreshCompleter;
-  final TemperatureUnits units;
 
   @override
   void initState() {
