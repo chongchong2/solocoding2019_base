@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:solocoding2019_base/blocs/weather_bloc.dart';
+import 'package:solocoding2019_base/pages/home/current_weather.dart';
 import 'package:solocoding2019_base/repositories/weather_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -26,7 +27,6 @@ class _HomeState extends State<Home> {
     _refreshCompleter = Completer<void>();
     _weatherBloc = WeatherBloc(weatherRepository: widget.weatherRepository);
 
-
     _weatherBloc.dispatch(FetchWeather(city: 'seoul'));
   }
 
@@ -34,49 +34,60 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-
-
+        title: Text('Flutter Weather'),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.bookmark),
+            onPressed: () async {
+//              final city = await Navigator.push(
+//                context,
+//                MaterialPageRoute(
+//                  builder: (context) => CitySelection(),
+//                ),
+//              );
+//              if (city != null) {
+//                _weatherBloc.dispatch(FetchWeather(city: city));
+//              }
+            },
+          )
+        ],
       ),
       body: Center(
         child: BlocBuilder(
-          bloc: _weatherBloc,
-          builder: (_, WeatherState state) {
-            if (state is WeatherEmpty) {
-              return Center(child: Text(''));
-            }
-            if (state is WeatherLoading) {
-              return Center(child: CircularProgressIndicator());
-            }
-            if (state is WeatherLoaded) {
-              final weather = state.weather;
-              print(weather);
+            bloc: _weatherBloc,
+            builder: (_, WeatherState state) {
+              if (state is WeatherEmpty) {
+                return Center(child: Text(''));
+              }
+              if (state is WeatherLoading) {
+                return Center(child: CircularProgressIndicator());
+              }
+              if (state is WeatherLoaded) {
+                final weather = state.weather;
+                print(weather);
 
-
-              _refreshCompleter?.complete();
-              _refreshCompleter = Completer();
-              return RefreshIndicator(
-                onRefresh: () {
-                  _weatherBloc.dispatch(
-                    RefreshWeather(city: state.weather.location),
-                  );
+                _refreshCompleter?.complete();
+                _refreshCompleter = Completer();
+                return RefreshIndicator(
+                  onRefresh: () {
+                    _weatherBloc.dispatch(
+                      RefreshWeather(city: state.weather.location),
+                    );
                     return _refreshCompleter.future;
                   },
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-
-                    Text('current : ${weather.temp.round()}°'),
-                    Text('max : ${weather.maxTemp.round()}°'),
-                    Text('min : ${weather.minTemp.round()}°'),
-                    Text('${weather.condition}°'),
-                  ],
-                ),
-              );
-            }
-          }
-        ),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: <Widget>[
+                      CurrentWeather(weather: weather,),
+//                      Text('max : ${weather.maxTemp.round()}°'),
+//                      Text('min : ${weather.minTemp.round()}°'),
+//                      Text('${weather.condition}°'),
+                    ],
+                  ),
+                );
+              }
+            }),
       ),
     );
   }
-
 }
