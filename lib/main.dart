@@ -1,30 +1,64 @@
 import 'package:flutter/material.dart';
 
-void main() => runApp(MyApp());
+import 'package:http/http.dart' as http;
+import 'package:bloc/bloc.dart';
 
-// This widget is the root of your application.
-class MyApp extends StatefulWidget {
+import 'package:solocoding2019_base/pages/home/home.dart';
+import 'package:solocoding2019_base/repositories/weather_api_client.dart';
+import 'package:solocoding2019_base/repositories/weather_repository.dart';
+
+
+class SimpleBlocDelegate extends BlocDelegate {
   @override
-  State<StatefulWidget> createState() => new MyAppState();
+  onTransition(Transition transition) {
+    super.onTransition(transition);
+    print(transition);
+  }
+
+  @override
+  void onError(Object error, StackTrace stacktrace) {
+    super.onError(error, stacktrace);
+    print(error);
+  }
 }
 
-class MyAppState extends State<MyApp> {
+void main() {
+  final WeatherRepository weatherRepository = WeatherRepository(
+    weatherApiClient: WeatherApiClient(
+      httpClient: http.Client(),
+    ),
+  );
+
+  BlocSupervisor().delegate = SimpleBlocDelegate();
+  runApp(App(weatherRepository: weatherRepository));
+}
+
+class App extends StatefulWidget {
+  final WeatherRepository weatherRepository;
+
+  App({Key key, @required this.weatherRepository})
+      : assert(weatherRepository != null),
+        super(key: key);
+
+  @override
+  State<App> createState() => _AppState();
+}
+
+class _AppState extends State<App> {
+
   @override
   Widget build(BuildContext context) {
-    // set material design app
     return MaterialApp(
-      title: 'solocoding2019', // application name
-      theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
-      home: Scaffold(
-        appBar: AppBar(
-          title: Text('Flutter Demo'), // app bar title
-        ),
-        body: Center(
-          child: Text('Hello, world'), // center text
-        ),
+      title: 'Flutter Weather',
+
+      home: Home(
+        weatherRepository: widget.weatherRepository,
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 }
