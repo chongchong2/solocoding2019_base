@@ -33,12 +33,26 @@ class ForecastWeather extends StatelessWidget {
             children: new List<Widget>.generate(8, (index) {
               return new GridTile(
                 child: new Container(
-                    child: new Center(
-                      child: new Text(_formattedTemperature(forecastWeathers
-                          .forecastList[5 + index].main.temp)
-                          .toString() +
-                          '°'),
-                    )),
+                  child: new Column(
+                    children: <Widget>[
+                      Center(
+                        child: new Text(forecastWeathers.forecastList[5 + index].dtTxt),
+                      ),
+                      Center(
+                        child: new Text(_formattedTemperature(forecastWeathers
+                            .forecastList[5 + index].main.temp)
+                            .toString() +
+                            '°'),
+                      )
+                    ],
+                  ),
+//                    child: new Center(
+//                      child: new Text(_formattedTemperature(forecastWeathers
+//                          .forecastList[5 + index].main.temp)
+//                          .toString() +
+//                          '°'),
+//                    )
+                ),
               );
             }),
           ),

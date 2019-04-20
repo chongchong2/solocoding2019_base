@@ -10,7 +10,7 @@ import 'package:location/location.dart';
 
 class WeatherApiClient {
   static const baseUrl = 'https://api.openweathermap.org/data/2.5';  //'https://www.metaweather.com';
-  static const apiKey = 'edc56f230818e7fc86847d7cc3ceab38';
+  static const apiKey = 'ß';
   final http.Client httpClient;
 
   WeatherApiClient({@required this.httpClient}) : assert(httpClient != null);
