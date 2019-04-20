@@ -1,12 +1,15 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
 import 'package:bloc/bloc.dart';
 
 import 'package:solocoding2019_base/pages/home/home.dart';
+import 'package:solocoding2019_base/repositories/file_storage.dart';
 import 'package:solocoding2019_base/repositories/weather_api_client.dart';
 import 'package:solocoding2019_base/repositories/weather_repository.dart';
-
+import 'package:path_provider/path_provider.dart';
 
 class SimpleBlocDelegate extends BlocDelegate {
   @override
@@ -35,7 +38,14 @@ void main() {
 
 class App extends StatefulWidget {
   final WeatherRepository weatherRepository;
-
+//  final todosBloc = TodosBloc(
+//    todosRepository: const TodosRepositoryFlutter(
+//      fileStorage: const FileStorage(
+//        '__flutter_bloc_app__',
+//        getApplicationDocumentsDirectory,
+//      ),
+//    ),
+//  );
   App({Key key, @required this.weatherRepository})
       : assert(weatherRepository != null),
         super(key: key);

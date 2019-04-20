@@ -22,9 +22,9 @@ class Temperature extends StatelessWidget {
           child: Text(
             '${_formattedTemperature(temperature)}°',
             style: TextStyle(
-              fontSize: 32,
+              fontSize: 40,
               fontWeight: FontWeight.w600,
-              color: Colors.black,
+              color: Colors.white,
             ),
           ),
         ),
@@ -33,17 +33,17 @@ class Temperature extends StatelessWidget {
             Text(
               'max: ${_formattedTemperature(high)}°',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 18,
                 fontWeight: FontWeight.w100,
-                color: Colors.black,
+                color: Colors.white,
               ),
             ),
             Text(
               'min: ${_formattedTemperature(low)}°',
               style: TextStyle(
-                fontSize: 16,
+                fontSize: 18,
                 fontWeight: FontWeight.w100,
-                color: Colors.black,
+                color: Colors.white,
               ),
             )
           ],
