@@ -1,12 +1,16 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:solocoding2019_base/blocs/file_bloc.dart';
 import 'package:solocoding2019_base/blocs/weather_bloc.dart';
+import 'package:solocoding2019_base/models/stored_weather_model.dart';
 import 'package:solocoding2019_base/models/weather_model.dart';
 import 'package:solocoding2019_base/pages/home/current_weather.dart';
 import 'package:solocoding2019_base/pages/home/forecast_weather.dart';
 import 'package:solocoding2019_base/pages/home/location.dart';
 import 'package:solocoding2019_base/pages/home/location_selection.dart';
+import 'package:solocoding2019_base/pages/home/weather_history_page.dart';
+import 'package:solocoding2019_base/repositories/file_repository.dart';
 import 'package:solocoding2019_base/repositories/file_storage.dart';
 import 'package:solocoding2019_base/repositories/weather_repository.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -26,19 +30,25 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   WeatherBloc _weatherBloc;
+  FileBloc _fileBloc;
   Completer<void> _refreshCompleter;
 
-//  var fileStorage = new FileStorage(
-//    '__flutter_bloc_app__',
-//    getApplicationDocumentsDirectory,
-//  );
+  var fileStorage = new FileStorage(
+    '__flutter_bloc_app__',
+    getApplicationDocumentsDirectory,
+  );
+
+
 
   @override
   void initState() {
     super.initState();
+    var fileRepository = FileRepository(fileStorage: fileStorage);
+    _fileBloc = FileBloc(fileRepository: fileRepository);
+    _fileBloc.dispatch(LoadWeathers());
+
     _refreshCompleter = Completer<void>();
     _weatherBloc = WeatherBloc(weatherRepository: widget.weatherRepository);
-
 //    _weatherBloc.dispatch(FetchWeather(city: 'seoul'));
     _weatherBloc.dispatch(LocationWeather());
   }
@@ -46,9 +56,22 @@ class _HomeState extends State<Home> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+
       appBar: AppBar(
         title: Text('Flutter Weather'),
         actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.bookmark),
+            onPressed: () async {
+              await Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => WeatherHistoryPage(fileBloc: _fileBloc),
+                ),
+              );
+
+            },
+          ),
           IconButton(
             icon: Icon(Icons.search),
             onPressed: () async {
@@ -76,11 +99,15 @@ class _HomeState extends State<Home> {
                 return Center(child: CircularProgressIndicator());
               }
               if (state is WeatherLoaded) {
-//                var todos = new List<Weather>();
-//                todos.add(state.weather);
-//                fileStorage.saveTodos(todos);
-//
-//                var lod = fileStorage.loadTodos();
+              var now = new DateTime.now();
+              var storedWeather = StoredWeather(
+                  location: state.weathers.name.toString(),
+                  current_temp: state.weathers.main.temp.round().toString(),
+                  max_temp: state.weathers.main.temp_max.round().toString(),
+                  min_temp: state.weathers.main.temp_min.round().toString(),
+                  date: _getweekday());
+                _fileBloc.dispatch(AddWeathers(storedWeather));
+
 
                 final weathers = state.weathers;
                 final forecastWeathers = state.forecastWeathers;

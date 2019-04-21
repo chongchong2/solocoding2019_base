@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:solocoding2019_base/models/stored_weather_model.dart';
 import 'package:solocoding2019_base/models/weather_model.dart';
 
 class FileStorage {
@@ -12,23 +13,32 @@ class FileStorage {
       this.getDirectory,
       );
 
-  Future<List<Weather>> loadTodos() async {
+  Future<List<StoredWeatherEntity>> loadTodos() async {
     final file = await _getLocalFile();
-    final string = await file.readAsString();
-    final json = JsonDecoder().convert(string);
-    final todos = (json['todos'])
-//        .map<Weather>((todo) => Weather.fromFileJson(todo))
-        .toList();
-
-    return todos;
+    try {
+      final string = await file.readAsString();
+      final json = JsonDecoder().convert(string);
+      final weathers = (json['weathers'])
+          .map<StoredWeather>((weathers) => StoredWeatherEntity.fromJson(weathers))
+          .toList();
+      return weathers;
+    }catch(e) {
+      print(e);
+    }
   }
 
-  Future<File> saveTodos(List<Weather> todos) async {
+  Future<File> saveTodos(List<StoredWeatherEntity> weathers) async {
     final file = await _getLocalFile();
 
-    return file.writeAsString(JsonEncoder().convert({
-//      'todos': todos.map((todo) => todo.toJson()).toList(),
-    }));
+//    var rr = JsonEncoder().convert(weathers.getRawFson());
+
+    var result =  file.writeAsString(
+        JsonEncoder().convert({
+      'weathers': weathers.map((weathers) => weathers.toJson()).toList(),
+    })
+    );
+
+    return result;
   }
 
   Future<File> _getLocalFile() async {

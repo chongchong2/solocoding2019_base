@@ -55,6 +55,7 @@ class Weathers extends Equatable {
   ]);
 
   static Weathers fromJson(Map<String, dynamic> json) {
+    rawJson = json;
     var list = json['weather'] as List;
     final weatherList = list.map((i) => Weather.fromJson(i)).toList();
 
@@ -70,6 +71,39 @@ class Weathers extends Equatable {
         id: json['id'],
         name: json['name'],
         cod: json['cod']);
+  }
+
+  Map<String, Object> toJson() {
+    return {
+//      "complete": complete,
+//      "task": task,
+//      "note": note,
+//      "id": id,
+      "coord": Coord().toJson(),
+//      "weather":
+    };
+  }
+
+  static Weathers fromEntity(Weathers entity) {
+    return Weathers(
+      coord : entity.coord,
+      weather: entity.weather,
+      base: entity.base,
+      main: entity.main,
+      wind: entity.wind,
+      clouds: entity.clouds,
+      dt: entity.dt,
+      sys: entity.sys,
+      id: entity.id,
+      name: entity.name,
+      cod: entity.cod
+    );
+  }
+
+  static Map<String, dynamic> rawJson;
+
+   Map<String, dynamic> getRawFson() {
+    return rawJson;
   }
 }
 
@@ -89,6 +123,13 @@ class Coord extends Equatable {
         lon: json['lon'],
         lat: json['lat'],
       );
+
+  Map<String, Object> toJson(){
+    return {
+      "lat": lat,
+      "lon": lon
+    };
+  }
 
 }
 
